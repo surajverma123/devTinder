@@ -2,6 +2,7 @@
  const app = express();
  const database = require("./config/database");
  const User = require("./models/user"); 
+ const validator = require("validator");
  const bcrypt = require("bcrypt");
 const  { validateSignupData } = require("./utils/validation")
 
@@ -40,6 +41,33 @@ const  { validateSignupData } = require("./utils/validation")
       })
    }
  })
+
+ app.post("/login", async(req, res, next) => {
+   try {
+      const { email, password } = req.body;
+      // make a validator
+      
+      if (!validator.isEmail(email)) {
+         throw new Error("Email is not valid");
+      }
+      const user = await User.findOne({ emailId: email});
+      if (!user) {
+         throw new Error("Email and password are not match");
+      }
+
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      
+      if (isPasswordValid){
+         res.status(200).send("User login successfull");
+      } else {
+         throw new Error("password is not valid")
+      }
+   } catch(error) {
+      res.status(403).json({
+         message: error.message,
+      })
+   }
+ });
 
 //  GET:- User
 app.get("/user", async (req, res) => {
