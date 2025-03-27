@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
 
 const connectDB = async () => {
-    await mongoose.connect("mongodb+srv://surajverma:devtinder@cluster0.b4g8f.mongodb.net/devTinder", {
+    // nidhisurajverma@gmail.com/kanipura@@@477116#
+    await mongoose.connect("mongodb+srv://devTinder:devTinder@cluster0.b4g8f.mongodb.net/devTinder", {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     });       
