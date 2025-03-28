@@ -7,6 +7,7 @@ const bcrypt = require("bcrypt");
 const { validateSignupData } = require("./utils/validation");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
+const { userAuth } = require("./middlewares/auth");
 
 // middleware to pass JSON data to javascript data.
 app.use(express.json());
@@ -42,17 +43,9 @@ app.post("/signup", async (req, res, next) => {
   }
 });
 
-app.get("/profile", async (req, res, next) => {
+app.get("/profile", userAuth, async (req, res, next) => {
   try {
-    const cookies = req.cookies;
-    const { token } = cookies;
-    if (!token) {
-      throw new Error("Token is not valid");
-    }
-    const decodedValue = await jwt.verify(token, "DEV@Tinder123#");
-    const { _id } = decodedValue;
-    const user = await User.findById(_id);
-
+    const user = req.user;
     if(!user) {
       throw new Error("User is not exits, please login again")
     }
@@ -107,7 +100,7 @@ app.post("/login", async (req, res, next) => {
 });
 
 //  GET:- User
-app.get("/user", async (req, res) => {
+app.get("/user", userAuth, async (req, res) => {
   const email = req.body.email;
   try {
     const users = await User.find({ emailId: email });
@@ -132,7 +125,7 @@ app.get("/feed", async (req, res) => {
 });
 
 // Delete a user
-app.delete("/user", async (req, res) => {
+app.delete("/user", userAuth, async (req, res) => {
   const userId = req.body.userId;
   const user = await User.findByIdAndDelete(userId);
   res.status(200).json({
@@ -142,7 +135,7 @@ app.delete("/user", async (req, res) => {
 });
 
 // Update a user
-app.patch("/user", async (req, res) => {
+app.patch("/user", userAuth, async (req, res) => {
   const firstName = req.body.firstName;
   const lastName = req.body.lastName;
   const userId = req.body.userId;
