@@ -13,7 +13,6 @@ app.use(express.json());
 app.use(cookieParser());
 app.post("/signup", async (req, res, next) => {
   try {
-    console.log(req.body);
     // Validate the data
     validateSignupData(req);
 
@@ -30,7 +29,6 @@ app.post("/signup", async (req, res, next) => {
       gender: req.body.gender,
       password: passwordHash,
     };
-    console.log("========== REQ.BODY1 ======", req.body);
     const user = new User(userObj);
     await user.save();
     res.status(201).json({
@@ -63,9 +61,6 @@ app.get("/profile", async (req, res, next) => {
       success: true,
       user,
     });
-   
-    console.log("=========>>>>>> Cookie ====>>>", decodedValue);
-    // res.status(200).send("Reading coockies");
   } catch (error) {
     res.status(403).json({
       message: error.message || "Something went wrong",
@@ -98,7 +93,6 @@ app.post("/login", async (req, res, next) => {
         },
         "DEV@Tinder123#"
       );
-      console.log("======== TOKEN ========", token);
       // set Cookie
       res.cookie("token", token);
       res.status(200).send("User login successfull");
