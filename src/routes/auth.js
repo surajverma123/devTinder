@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 
 const { validateSignupData } = require("../utils/validation");
 const User = require("../models/user");
+const { userAuth } = require("../middlewares/auth");
 
 
 const router = express.Router();
@@ -74,5 +75,11 @@ router.post("/signup", async (req, res, next) => {
     });
   }
 });
+
+router.post("/logout", async(req, res, next) => {
+  // set the cookies expire
+  res.cookie('token', null, { expires: new Date(Date.now())});
+  res.status(200).json({ message: "Logout is successfully"});
+})
 
 module.exports = router;
