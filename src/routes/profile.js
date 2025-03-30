@@ -29,10 +29,10 @@ try {
     throw new Error("Invalid Edit request")
   }
   const { user: loggedInUser } = req;
-  console.log("======= USER ======", user);
 
   // Updating value with new values that provided by user
-  Object.keys(req.body).forEach((key) => loggedInUser[key] = req.body[key])
+  Object.keys(req.body).forEach((key) => loggedInUser[key] = req.body[key]);
+
   await loggedInUser.save();
   res.status(201).json({
     message: "User updated successfully",
