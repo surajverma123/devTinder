@@ -4,6 +4,8 @@ const router = express.Router();
 
 const { userAuth } = require("../middlewares/auth")
 const ConnectionRequest = require("../models/connectionRequest");
+const User = require("../models/user");
+
 const USER_SAFE_DATA = "firstName lastName photoUrl age gender about skills";
 
 router.get("/requests/received", userAuth, async(req, res, next) => {
@@ -54,5 +56,39 @@ router.get("/connection", userAuth, async(req, res, next) => {
     })
   }
 })
+
+router.get("/feed", userAuth, async(req, res, next) => {
+  try {
+    const loggedInUser = req.user;
+    const connectionRequest = await ConnectionRequest.find({
+      $or: [
+        { toUserId: loggedInUser._id }, { fromUserId: loggedInUser._id },
+      ]
+    }).select("fromUserId toUserId");
+
+    const hideUserFromFeed = new Set();
+
+    connectionRequest.forEach(cReq => {
+      hideUserFromFeed.add(cReq.toUserId.toString());
+      hideUserFromFeed.add(cReq.fromUserId.toString());
+    });
+
+    const users = await User.find({
+      $and: [
+        { _id: { $nin: Array.from(hideUserFromFeed)} },
+        { _id: { $ne: loggedInUser._id }}
+      ]
+    })
+    .select(USER_SAFE_DATA)
+    res.json({ 
+      users,
+    })
+  } catch(error) {
+    res.status(400).json({
+      message: error?.message || "Some thing went wrong"
+    })
+  }
+});
+
 
 module.exports = router;
