@@ -6,6 +6,9 @@ const cookieParser = require("cookie-parser");
 const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
 const requestRouter = require("./routes/request");
+const requestRouter = require("./routes/request");
+const userRouter = require("./routes/user");
+
 // middleware to pass JSON data to javascript data.
 app.use(express.json());
 app.use(cookieParser());
@@ -13,6 +16,7 @@ app.use(cookieParser());
 app.use("/auth", authRouter);
 app.use("/profile", profileRouter);
 app.use("/request", requestRouter);
+app.use("/user", userRouter);
 
 database()
   .then(() => {
