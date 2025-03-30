@@ -30,14 +30,16 @@ router.get("/connection", userAuth, async(req, res, next) => {
     const loggedInUser = req.user;
     // Suraj ==> sent ==> Akash
     // Pooja ==> sent ==> Suraj
-    const connections = await ConnectionRequest.findOne({
+    const connections = await ConnectionRequest.find({
       $or: [
         { toUserId: loggedInUser._id, status: "accepted" },
         { fromUserId: loggedInUser._id, status: "accepted" }
       ]
     })
     .populate("fromUserId", USER_SAFE_DATA)
-    .populate("toUserId", USER_SAFE_DATA)
+    .populate("toUserId", USER_SAFE_DATA);
+    console.log(connections);
+
     const data = connections.map(row => {
       if (row.fromUserId._id.toString() === loggedInUser._id.toString()) {
         return row.toUserId
