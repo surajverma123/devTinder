@@ -22,8 +22,8 @@ app.use("/user", userRouter);
 database()
   .then(() => {
     console.log("Database connection has established successfully");
-    app.listen(3000, () => {
-      console.log("=========== Server started at 3000 ======");
+    app.listen(7777, () => {
+      console.log("=========== Server started at 7777 ======");
     });
   })
   .catch((error) => {
