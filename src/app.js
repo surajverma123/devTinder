@@ -18,6 +18,9 @@ app.use("/auth", authRouter);
 app.use("/profile", profileRouter);
 app.use("/request", requestRouter);
 app.use("/user", userRouter);
+app.get("/", (req, res, next) => {
+  res.send("API working fine");
+})
 
 database()
   .then(() => {
