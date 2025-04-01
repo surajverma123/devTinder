@@ -11,7 +11,7 @@ const USER_SAFE_DATA = "firstName lastName photoUrl age gender about skills";
 router.get("/requests/received", userAuth, async(req, res, next) => {
     try {
       const loggedInUser = req.user;
-      const conRequest = await ConnectionRequest.findOne({
+      const conRequest = await ConnectionRequest.find({
         toUserId: loggedInUser._id,
         status: "interested"
       })
@@ -27,7 +27,7 @@ router.get("/requests/received", userAuth, async(req, res, next) => {
 })
 
 
-router.get("/connection", userAuth, async(req, res, next) => {
+router.get("/connections", userAuth, async(req, res, next) => {
   try {
     const loggedInUser = req.user;
     // Suraj ==> sent ==> Akash

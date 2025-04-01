@@ -11,13 +11,13 @@ const router = express.Router();
 
 router.post("/login", async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { emailId, password } = req.body;
     // make a validator
 
-    if (!validator.isEmail(email)) {
+    if (!validator.isEmail(emailId)) {
       throw new Error("Email is not valid");
     }
-    const user = await User.findOne({ emailId: email });
+    const user = await User.findOne({ emailId });
     if (!user) {
       throw new Error("Email and password are not match");
     }
