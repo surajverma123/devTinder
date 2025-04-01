@@ -22,7 +22,7 @@ router.post("/login", async (req, res, next) => {
       throw new Error("Email and password are not match");
     }
 
-    const isPasswordValid = user.validatePassword(password);
+    const isPasswordValid = await user.validatePassword(password);
     if (isPasswordValid) {
       // Create JWTtoken
       const token = await user.getJWT();
