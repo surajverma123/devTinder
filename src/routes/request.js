@@ -2,7 +2,7 @@ const express = require("express");
 const { userAuth } = require("../middlewares/auth");
 const User = require("../models/user")
 const ConnectionRequest = require("../models/connectionRequest");
-
+const { run } = require("../utils/sendEmail");
 const router = express.Router();
 
 router.post("/send/:status/:toUserId", userAuth, async (req, res, next) => {
@@ -39,10 +39,12 @@ router.post("/send/:status/:toUserId", userAuth, async (req, res, next) => {
       toUserId,
       status
     })
-    await connectReuest.save();
+    const data = await connectReuest.save();
+    const emailResponse = await run();
+    console.log("======== emailResponse ========", emailResponse);
     res.status(200).json({
       message: req.user.firstName + " is " + status + " in " + isToUserExits.firstName,
-      connectReuest
+      data,
     })
   } catch(error) {
     res.status(400).send("Error: " + error.message)

@@ -8,6 +8,7 @@ const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
 const requestRouter = require("./routes/request");
 const userRouter = require("./routes/user");
+require('dotenv').config();
 
 // middleware to pass JSON data to javascript data.
 app.use(express.json());
@@ -27,13 +28,30 @@ app.get("/", (req, res, next) => {
   res.send("API working fine");
 })
 
-database()
-  .then(() => {
-    console.log("Database connection has established successfully");
-    app.listen(7777, () => {
-      console.log("=========== Server started at 7777 ======");
-    });
+//server connectivity
+const port = process.env.PORT;
+
+const listener = app.listen(port, () => {
+  console.log(`Server started on port ${listener.address().port}`);
+});
+
+//database connectivity
+database()    
+  .then(() => {  
+    console.log("Database connection established successfully");
   })
   .catch((error) => {
-    console.log("Error: Not able to connect with database", error);
+    console.log("Error: Unable to connect to the database", error);
   });
+
+
+// database()
+//   .then(() => {
+//     console.log("Database connection has established successfully");  
+//     app.listen(process.env.PORT, () => {
+//       console.log(`=========== Server started at ${process.env.PORT} ======`);
+//     });
+//   })
+//   .catch((error) => {
+//     console.log("Error: Not able to connect with database", error);
+//   });
