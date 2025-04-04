@@ -7,6 +7,8 @@ const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
 const requestRouter = require("./routes/request");
 const userRouter = require("./routes/user");
+const chatRouter = require("./routes/chat");
+
 const initializeSocket = require("./utils/socket");
 const app = express();
 const http = require('http');
@@ -28,6 +30,8 @@ app.use("/auth", authRouter);
 app.use("/profile", profileRouter);
 app.use("/request", requestRouter);
 app.use("/user", userRouter);
+app.use("/chat", chatRouter);
+
 app.get("/", (req, res, next) => {
   res.send("API working fine");
 })
