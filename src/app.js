@@ -1,13 +1,17 @@
-const express = require("express");
-const app = express();
-const cors = require("cors");
-const database = require("./config/database");
-
 const cookieParser = require("cookie-parser");
+const express = require("express");
+const cors = require("cors");
+
+const database = require("./config/database");
 const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
 const requestRouter = require("./routes/request");
 const userRouter = require("./routes/user");
+const initializeSocket = require("./utils/socket");
+const app = express();
+const http = require('http');
+
+require("./utils/cronjob");
 require('dotenv').config();
 
 // middleware to pass JSON data to javascript data.
@@ -28,30 +32,20 @@ app.get("/", (req, res, next) => {
   res.send("API working fine");
 })
 
+const server = http.createServer(app);
+
+initializeSocket(server);
 //server connectivity
 const port = process.env.PORT;
-
-const listener = app.listen(port, () => {
-  console.log(`Server started on port ${listener.address().port}`);
-});
 
 //database connectivity
 database()    
   .then(() => {  
     console.log("Database connection established successfully");
+    server.listen(port, () => {
+      console.log(`Server started on port ${port}`);
+    });
   })
   .catch((error) => {
     console.log("Error: Unable to connect to the database", error);
   });
-
-
-// database()
-//   .then(() => {
-//     console.log("Database connection has established successfully");  
-//     app.listen(process.env.PORT, () => {
-//       console.log(`=========== Server started at ${process.env.PORT} ======`);
-//     });
-//   })
-//   .catch((error) => {
-//     console.log("Error: Not able to connect with database", error);
-//   });
