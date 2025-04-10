@@ -16,17 +16,20 @@ const initializeSocket = (server) => {
       origin: "http://localhost:5173",
     },
   });
+  const onlineUsers = new Map(); // ✅ Global scope, shared across all sockets
 
   io.on("connection", (socket) => {
     // Handle events
     socket.on("joinChat", async ({ userId, targetUserId, firstName }) => {
       const room = getSecretRoomId(userId, targetUserId);
-      const user = await User.findOneAndUpdate(
+      console.log("======== ROOMID =======", room)
+      await User.findOneAndUpdate(
         { _id: userId },                         // filter
         { status: "online", lastSeen: null },   // update
         { new: true }                           // options: return updated document
       );
-      // console.log("=========== USER ==========", user);
+      onlineUsers.set(userId, socket.id);
+      socket.userId = userId;
       socket.join(room);
     });
 
@@ -76,6 +79,14 @@ const initializeSocket = (server) => {
             text,
             lastName,
           });
+
+          // const targetSocketId = onlineUsers.get(targetUserId);
+          if (roomId) {
+            io.to(roomId).emit("new-notification", {
+              message: text,
+              senderId: userId,
+            });
+          }
         } catch (error) {
           console.error(error);
         }
@@ -83,7 +94,6 @@ const initializeSocket = (server) => {
     );
 
     socket.on("user-disconnecting", async ({ userId }) => {
-      console.log("=========== USER ID =======", userId);
       await User.findOneAndUpdate(
         { _id: userId },                         // filter
         { status: "offline", lastSeen: new Date() },   // update
@@ -91,8 +101,11 @@ const initializeSocket = (server) => {
       );
     });
 
-    socket.on("disconnect", async (userId ) => {
+    socket.on("disconnect", async () => {
       console.log("User dis-connected successfully");
+      if (socket.userId) {
+        onlineUsers.delete(socket.userId);
+      }
     });
   });
 };

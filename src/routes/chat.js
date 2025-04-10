@@ -8,7 +8,8 @@ router.get("/:targetUserId", userAuth, async(req, res, next) => {
     try {
         const { targetUserId } = req.params;
         const userId = req.user._id;
-
+        const page  = req.params.page || 1;
+        const limit = req.params.limit || 10;
         let chat = await Chat.findOne({
             participants: {$all: [userId, targetUserId]}
         })
