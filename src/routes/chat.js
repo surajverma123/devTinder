@@ -10,6 +10,9 @@ router.get("/:targetUserId", userAuth, async(req, res, next) => {
         const userId = req.user._id;
         const page  = req.params.page || 1;
         const limit = req.params.limit || 10;
+        // const skip = (page -1) * limit;
+        // limit = limit > 50 ? 50: limit;
+
         let chat = await Chat.findOne({
             participants: {$all: [userId, targetUserId]}
         })
