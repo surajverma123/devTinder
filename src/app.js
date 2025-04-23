@@ -1,6 +1,7 @@
 const cookieParser = require("cookie-parser");
 const express = require("express");
 const cors = require("cors");
+const logger = require('./utils/logger');
 
 const database = require("./config/database");
 const authRouter = require("./routes/auth");
@@ -26,6 +27,12 @@ app.use(
     credentials: true,
   })
 );
+
+app.use((req, res, next) => {
+  logger.info(`${req.method} ${req.url}`);
+  next();
+});
+
 app.use("/auth", authRouter);
 app.use("/profile", profileRouter);
 app.use("/request", requestRouter);
