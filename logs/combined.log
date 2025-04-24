@@ -18,3 +18,11 @@
 [2025-04-14 14:38:29] INFO: GET /profile/view
 [2025-04-14 14:41:14] INFO: GET /profile/view
 [2025-04-14 14:41:16] INFO: GET /profile/view
+[2025-04-24 13:29:41] INFO: GET /user/feed
+[2025-04-24 13:29:41] INFO: GET /profile/view
+[2025-04-24 13:29:57] INFO: POST /auth/login
+[2025-04-24 13:29:57] INFO: GET /user/feed
+[2025-04-24 13:30:06] INFO: GET /user/connections
+[2025-04-24 13:30:08] INFO: GET /user/requests/received
+[2025-04-24 13:30:10] INFO: GET /premium/verify
+[2025-04-24 13:30:16] INFO: POST /auth/logout
