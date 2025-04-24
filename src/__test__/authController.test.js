@@ -3,10 +3,10 @@ const bcrypt = require("bcrypt");
 
 const { userLogin, userSignup } = require('../controllers/auth'); // Adjust the path
 const User = require('../models/user'); // Adjust the path
-const { validateSignupData } = require('../utils/validation');
+const dataValidator = require('../utils/validation');
 
 jest.mock('../models/user'); // Mock the User model
-
+jest.mock('../utils/validation');
 describe('userLogin controller', () => {
   let req, res, next;
 
@@ -137,5 +137,32 @@ describe("userSignup controller", () => {
       message: "User added successfully",
       user: mockSavedUser
     })
+  })
+
+  it("should return 500 if save throws an error", async() =>{
+    const error = new Error("DB Error");
+    const hashedPassword = "Hashed Password";
+    bcrypt.hash.mockResolvedValue(hashedPassword);
+    User.mockImplementation(() => ({
+      save: jest.fn().mockRejectedValue(error)
+    }));
+
+    await userSignup(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ error })
+  })
+
+  it("should return 500 if vatidation failed", async() =>{
+    const error = new Error("Validation failed");
+
+    dataValidator.validateSignupData.mockImplementation(() => {
+      throw error;
+    });
+
+    await userSignup(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ error })
   })
 })
