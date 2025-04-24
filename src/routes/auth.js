@@ -5,7 +5,7 @@ const User = require("../models/user");
 
 const { validateSignupData } = require("../utils/validation");
 const { userAuth } = require("../middlewares/auth");
-const { userLogin, userSignup } = require("../controllers/auth");
+const { userLogin, userSignup } = require("../controllers/authController");
 
 const router = express.Router();
 

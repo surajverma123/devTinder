@@ -1,7 +1,7 @@
 const validator = require('validator');
 const bcrypt = require("bcrypt");
 
-const { userLogin, userSignup } = require('../controllers/auth'); // Adjust the path
+const { userLogin, userSignup } = require('../controllers/authController'); // Adjust the path
 const User = require('../models/user'); // Adjust the path
 const dataValidator = require('../utils/validation');
 
