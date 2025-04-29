@@ -1,13 +1,15 @@
 
 const { validateProfileEditData }  = require("../utils/validation");
+const User = require("../models/user");
 
 const getProfile = async (req, res, next) => {
   try {
-    const user = req.user;
-    if(!user) {
+    const userId = req.userId;
+    if(!userId) {
       throw new Error("User is not exits, please login again")
     }
-   
+
+    const user = await User.findById(userId);
     res.status(200).json({
       success: true,
       user,

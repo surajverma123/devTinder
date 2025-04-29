@@ -132,7 +132,6 @@ describe("userSignup controller", () => {
     // expect(validateSignupData).toHaveBeenCalledWith(req);
     expect(bcrypt.hash).toHaveBeenCalledWith('Password@123', 10);
     expect(res.status).toHaveBeenCalledWith(201);
-    console.log("======= JSON ========", res.json)
     expect(res.json).toHaveBeenCalledWith({
       message: "User added successfully",
       user: mockSavedUser

@@ -10,7 +10,6 @@ const userLogin = async (req, res, next) => {
       // make a validator
   
       if (!validator.isEmail(emailId)) {
-        console.log("====== ERROR ======")
         throw new Error("Email is not valid");
       }
       const user = await User.findOne({ emailId });
@@ -58,17 +57,14 @@ const userSignup = async (req, res, next) => {
       gender: req.body.gender,
       password: passwordHash,
     };
-    console.log("======= USEROBJ ", userObj);
 
     const user = new User(userObj);
     const savedUser = await user.save();
-    console.log("=========== USER ===========");
     res.status(201).json({
       message: "User added successfully",
       user: savedUser,
     });
   } catch (error) {
-    console.log("======= ERror ======",error)
     res.status(500).json({
       error,
     });

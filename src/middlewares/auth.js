@@ -21,6 +21,7 @@ const userAuth = async (req, res, next) => {
     throw new Error("Invalid User, you can not access")
   }
   req.user = user;
+  req.userId = user._id;
   next();
   } catch(error) {
     res.status(400).send("Error: " + error.message);
