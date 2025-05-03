@@ -2,10 +2,10 @@ const validator  = require("validator");
 
 const validateSignupData = (req) => {
     console.log("======= INSIDE VALIDATOR FUNCTION")
-    const { firstName,lastName,emailId, password} = req.body;
-    if (!firstName||!lastName ) {
+    const { fullName,emailId, password} = req.body;
+    if (!fullName ) {
         throw new Error("Name is not valid")
-    } else if (firstName.length < 4 || firstName > 50) {
+    } else if (fullName.length < 4 || fullName > 50) {
         throw new Error("first Name should be 4 to 50character");
     } else if (!validator.isEmail(emailId)) {
         throw new Error("Email is not valid");
@@ -15,8 +15,7 @@ const validateSignupData = (req) => {
 }
 
 const validateProfileEditData = (req) => {
-    const { age, gender, photoUrl, skills} = req.body;
-    const allowedEditFields = ["firstName", "lastName", "emailId", "photoUrl", "age", "gender","about", "skills"];
+    const allowedEditFields = ["fullName", "caste", "emailId", "photoUrl", "age", "gender","about", "skills","dob","confirmPassword"];
     
     const isAllowEdit = Object.keys(req.body).every(key => allowedEditFields.includes(key));
     
@@ -24,3 +23,4 @@ const validateProfileEditData = (req) => {
 }
 
 module.exports = { validateSignupData, validateProfileEditData }
+

@@ -47,7 +47,7 @@ const server = http.createServer(app);
 
 initializeSocket(server);
 //server connectivity
-const port = process.env.PORT;
+const port = process.env.PORT || 8080;
 
 //database connectivity
 database()    

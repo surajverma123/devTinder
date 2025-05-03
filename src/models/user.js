@@ -3,18 +3,26 @@ const validator = require("validator");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
+// save to the database
 const userSchema = new mongoose.Schema(
   {
-    firstName: {
+    fullName: {
       type: String,
       require: true,
       minLength: 4,
       maxLength: 30,
     },
-    lastName: {
+    caste: {
       type: String,
-      minLength: 4,
-      maxLength: 30,
+      required: true,
+      enum: {
+        values: ["dhobi", "pandit", "other"],
+        message: `{VALUE} is not a valid caste type`,
+      },
+    },
+    dob: {
+      type: Date,
+      required: true,
     },
     emailId: {
       type: String,
@@ -29,6 +37,12 @@ const userSchema = new mongoose.Schema(
       },
     },
     password: {
+      type: String,
+      required: true,
+      minLength: 4,
+      // maxLength: 30,
+    },
+    confirmPassword: {
       type: String,
       required: true,
       minLength: 4,
