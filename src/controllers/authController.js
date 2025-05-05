@@ -78,7 +78,14 @@ const userSignup = async (req, res, next) => {
   }
 }
 
+const userForgotPassword = async (req, res, next) => {
+  res.status(200).json({
+    success: true,
+  })
+};
+
 module.exports = {
   userLogin,
-  userSignup
+  userSignup,
+  userForgotPassword,
 }

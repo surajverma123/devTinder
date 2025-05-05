@@ -56,3 +56,8 @@
 [2025-05-03 17:18:02] INFO: GET /profile/view
 [2025-05-03 17:18:28] INFO: POST /auth/login
 [2025-05-03 17:18:28] INFO: GET /user/feed
+[2025-05-05 13:21:25] INFO: POST /auth/forgot-password
+[2025-05-05 14:02:41] INFO: POST /auth/forgot-password
+[2025-05-05 14:02:43] INFO: POST /auth/forgot-password
+[2025-05-05 14:02:51] INFO: POST /auth/forgot-password
+[2025-05-05 14:03:05] INFO: GET /auth/forgot-password
