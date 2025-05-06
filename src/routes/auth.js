@@ -1,5 +1,5 @@
 const express = require("express");
-const { userLogin, userSignup, userForgotPassword } = require("../controllers/authController");
+const { userLogin, userSignup, userForgotPassword, userResetPassword } = require("../controllers/authController");
 
 const router = express.Router();
 
@@ -8,6 +8,7 @@ router.post("/login", userLogin );
 router.post("/signup", userSignup);
 
 router.post("/forgot-password", userForgotPassword )
+router.post("/reset-password", userResetPassword )
 
 router.post("/logout", async(req, res, next) => {
   // set the cookies expire

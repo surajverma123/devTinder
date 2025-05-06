@@ -1,6 +1,6 @@
 const { SendEmailCommand } = require("@aws-sdk/client-ses");
 const { sesClient } = require("./sesClient");
-
+const crypto = require("crypto")
 
 const createSendEmailCommand = (toAddress, fromAddress, subject, body) => {
     return new SendEmailCommand({
@@ -59,7 +59,9 @@ const run = async (subject, body) => {
     }
   };
 
+  function generateOTP() {
+    return crypto.randomInt(100000, 999999).toString();
+  }
 
-
-  module.exports= { run }
+  module.exports= { run, generateOTP }
 
