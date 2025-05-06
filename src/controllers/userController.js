@@ -1,7 +1,7 @@
 const ConnectionRequest = require("../models/connectionRequest");
 const User = require("../models/user");
 
-const USER_SAFE_DATA = "firstName lastName photoUrl age gender about skills status lastSeen";
+const USER_SAFE_DATA = "fullName firstName lastName photoUrl age gender about skills status lastSeen";
 
 const requestReceived = async(req, res, next) => {
     try {
@@ -81,7 +81,7 @@ const feed = async(req, res, next) => {
     .select(USER_SAFE_DATA)
     .skip(skip)
     .limit(limit)
-
+    console.log("========== FEED ======", users);
     res.json({ 
       users,
     })
