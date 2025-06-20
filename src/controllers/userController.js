@@ -3,7 +3,7 @@ const User = require("../models/user");
 
 const USER_SAFE_DATA = "fullName firstName lastName photoUrl age gender about skills status lastSeen";
 
-const requestReceived = async(req, res, next) => {
+const requestReceived = async(req, res) => {
     try {
       const loggedInUser = req.user;
       const conRequest = await ConnectionRequest.find({
@@ -21,7 +21,7 @@ const requestReceived = async(req, res, next) => {
     }
 }
 
-const connections = async(req, res, next) => {
+const connections = async(req, res) => {
   try {
     const loggedInUser = req.user;
     // Suraj ==> sent ==> Akash
@@ -51,7 +51,7 @@ const connections = async(req, res, next) => {
   }
 }
 
-const feed = async(req, res, next) => {
+const feed = async(req, res) => {
   try {
     const loggedInUser = req.user;
     const page = req.params.page || 1;

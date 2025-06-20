@@ -2,7 +2,7 @@ const User = require("../models/user")
 const ConnectionRequest = require("../models/connectionRequest");
 const { run } = require("../utils/sendEmail");
 
-const send = async (req, res, next) => {
+const send = async (req, res) => {
   try{
     const fromUserId =  req.user._id;
     const toUserId = req.params.toUserId;
@@ -48,7 +48,7 @@ const send = async (req, res, next) => {
   }
 }
 
-const review = async(req, res, next) => {
+const review = async(req, res) => {
   try {
     const loggedInUser = req.user;
     const status = req.params.status;

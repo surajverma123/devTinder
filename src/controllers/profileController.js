@@ -2,7 +2,7 @@
 const { validateProfileEditData }  = require("../utils/validation");
 const User = require("../models/user");
 
-const getProfile = async (req, res, next) => {
+const getProfile = async (req, res) => {
   try {
     const userId = req.userId;
     if(!userId) {
@@ -22,7 +22,7 @@ const getProfile = async (req, res, next) => {
   }
 }
 
-const updateProfile = async(req, res,next) => {
+const updateProfile = async(req, res) => {
   try {
     if (!validateProfileEditData(req)) {
       throw new Error("Invalid Edit request")

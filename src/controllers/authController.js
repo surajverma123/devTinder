@@ -5,7 +5,7 @@ const { generateOTP, run } = require("../utils/sendEmail");
 const Otp = require("../models/otp");
 const { loginUser, signupUser } = require("../services/authService");
 
-const userLogin = async (req, res, next) => {
+const userLogin = async (req, res) => {
   try {
     const { emailId, password } = req.body;
     const { token, user } = await loginUser({ emailId, password })
@@ -24,7 +24,7 @@ const userLogin = async (req, res, next) => {
     });
   }
 };
-const userSignup = async (req, res, next) => {
+const userSignup = async (req, res) => {
   try {
     const {
       fullName,
@@ -60,7 +60,7 @@ const userSignup = async (req, res, next) => {
   }
 };
 
-const userForgotPassword = async (req, res, next) => {
+const userForgotPassword = async (req, res) => {
   try {
     const { emailId: email } = req.body;
 
@@ -107,7 +107,7 @@ const userForgotPassword = async (req, res, next) => {
   }
 };
 
-const userResetPassword = async (req, res, next) => {
+const userResetPassword = async (req, res) => {
   try {
     const { email, otp, password } = req.body;
 
@@ -124,7 +124,7 @@ const userResetPassword = async (req, res, next) => {
 
     //update password
     const passwordHash = await bcrypt.hash(password, 10);
-    const user = await User.findOne({ emailId: email });
+    // const user = await User.findOne({ emailId: email });
     await User.updateOne(
       { emailId: email },
       { $set: { password: passwordHash } }

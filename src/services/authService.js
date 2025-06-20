@@ -1,6 +1,7 @@
 const validator = require("validator");
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
+
 const { USER_PROFILE_DATA } = require("../utils/constant");
 const { validateSignupData } = require("../utils/validation");
 const loginUser = async ({ emailId, password }) => {
@@ -57,14 +58,13 @@ const signupUser = async ({
 
     const user = new User(userObj);
     const savedUser = await user.save();
-
     return savedUser;
   } catch (error) {
     console.error(error);
     throw new Error(error);
   }
 };
-
+ 
 module.exports = {
   loginUser,
   signupUser,
