@@ -6,37 +6,21 @@ const User = require("../models/user");
 const { validateSignupData } = require("../utils/validation");
 const { generateOTP, run } = require("../utils/sendEmail");
 const Otp = require("../models/otp");
+const { loginUser } = require("../services/authService");
 
 const userLogin = async (req, res, next) => {
   try {
     const { emailId, password } = req.body;
-    console.log();
-    // make a validator
-
-    if (!validator.isEmail(emailId)) {
-      throw new Error("Email is not valid");
-    }
-    const user = await User.findOne({ emailId });
-    if (!user) {
-      throw new Error("Email and password are not match");
-    }
-
-    const isPasswordValid = await user.validatePassword(password);
-    if (isPasswordValid) {
-      // Create JWTtoken
-      const token = await user.getJWT();
-
-      // set Cookie
-      // res.cookie("token", token, { httpOnly: true});
-
-      // This cookie will expire in 8h
-      res.cookie("token", token, {
-        expires: new Date(Date.now() + 8 * 3600000),
-      });
-      res.status(200).send({ status: 200, message: "User login successfull" });
-    } else {
-      throw new Error("password is not valid");
-    }
+    const { token, user } = await loginUser({ emailId, password })
+    // This cookie will expire in 8h
+    res.cookie("token", token, {
+      expires: new Date(Date.now() + 8 * 3600000),
+    });
+    res.status(200).send({
+      status: 200,
+      message: "User login successfull",
+      user
+    });
   } catch (error) {
     res.status(403).json({
       message: error.message,
