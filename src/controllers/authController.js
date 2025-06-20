@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const { generateOTP, run } = require('../utils/sendEmail');
 const Otp = require('../models/otp');
-const { loginUser, signupUser } = require('../services/authService');
+const { loginUser, signupUser, forgotPassword, resetPassword } = require('../services/authService');
 
 const userLogin = async (req, res) => {
   try {
@@ -72,24 +72,7 @@ const userForgotPassword = async (req, res) => {
       });
     }
 
-    // Generate OTP and expiration time
-    const otpCode = generateOTP();
-    const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
-
-    // Remove previous OTPs
-    await Otp.deleteMany({ email });
-
-    // Store new OTP
-    await Otp.create({ email, code: otpCode, expiresAt });
-    console.log('======== OTP ========', otpCode);
-    // Send OTP Email using SES
-    const subject = `Your OTP Code: ${otpCode}`;
-    const body = `
-      <p>This is your One-Time Password: <strong>${otpCode}</strong></p>
-      <p>Please do not share it with anyone. It will expire in 5 minutes.</p>
-    `;
-
-    await run(subject, body);
+    await forgotPassword({ email });
 
     return res.status(200).json({
       message: 'OTP sent successfully',
@@ -110,28 +93,7 @@ const userForgotPassword = async (req, res) => {
 const userResetPassword = async (req, res) => {
   try {
     const { email, otp, password } = req.body;
-
-    const record = await Otp.findOne({ email, code: otp });
-
-    if (!record) {
-      return res.status(400).json({ message: 'Invalid or expired OTP' });
-    }
-
-    if (record.expiresAt < new Date()) {
-      await Otp.deleteOne({ _id: record._id });
-      return res.status(400).json({ message: 'OTP expired' });
-    }
-
-    //update password
-    const passwordHash = await bcrypt.hash(password, 10);
-    // const user = await User.findOne({ emailId: email });
-    await User.updateOne(
-      { emailId: email },
-      { $set: { password: passwordHash } }
-    );
-
-    await Otp.deleteOne({ _id: record._id }); // OTP is single-use
-    
+    await resetPassword({ email, otp, password });
     res.status(200).json({
       success: true,
       status: 200,
@@ -141,7 +103,7 @@ const userResetPassword = async (req, res) => {
     res.status(500).json({
       message: error.message || 'Something went wrong',
       success: false,
-      status: 500,
+      status: error.statusCode || 500,
       error: error.message,
     });
   }
