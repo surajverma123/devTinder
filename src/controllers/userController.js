@@ -1,57 +1,57 @@
-const ConnectionRequest = require("../models/connectionRequest");
-const User = require("../models/user");
+const ConnectionRequest = require('../models/connectionRequest');
+const User = require('../models/user');
 
-const USER_SAFE_DATA = "fullName firstName lastName photoUrl age gender about skills status lastSeen";
+const USER_SAFE_DATA = 'fullName firstName lastName photoUrl age gender about skills status lastSeen';
 
-const requestReceived = async(req, res, next) => {
+const requestReceived = async(req, res) => {
     try {
       const loggedInUser = req.user;
       const conRequest = await ConnectionRequest.find({
         toUserId: loggedInUser._id,
-        status: "interested"
+        status: 'interested'
       })
-      .populate('fromUserId', USER_SAFE_DATA)
+      .populate('fromUserId', USER_SAFE_DATA);
 
       res.status(200).json({
         message: 'Data fetched successfully',
         data: conRequest,
-      })
+      });
     } catch(error) {
-        res.status(400).send("Error "+ error.message)
+        res.status(400).send('Error '+ error.message);
     }
-}
+};
 
-const connections = async(req, res, next) => {
+const connections = async(req, res) => {
   try {
     const loggedInUser = req.user;
     // Suraj ==> sent ==> Akash
     // Pooja ==> sent ==> Suraj
     const connections = await ConnectionRequest.find({
       $or: [
-        { toUserId: loggedInUser._id, status: "accepted" },
-        { fromUserId: loggedInUser._id, status: "accepted" }
+        { toUserId: loggedInUser._id, status: 'accepted' },
+        { fromUserId: loggedInUser._id, status: 'accepted' }
       ]
     })
-    .populate("fromUserId", USER_SAFE_DATA)
-    .populate("toUserId", USER_SAFE_DATA);
+    .populate('fromUserId', USER_SAFE_DATA)
+    .populate('toUserId', USER_SAFE_DATA);
     console.log(connections);
 
     const data = connections.map(row => {
       if (row.fromUserId._id.toString() === loggedInUser._id.toString()) {
-        return row.toUserId
+        return row.toUserId;
       }
 
       return row.fromUserId;
-    })
+    });
     res.json({ data });
   } catch(error) {
     res.status(400).json({
       message: `Error: ${error.message}`
-    })
+    });
   }
-}
+};
 
-const feed = async(req, res, next) => {
+const feed = async(req, res) => {
   try {
     const loggedInUser = req.user;
     const page = req.params.page || 1;
@@ -63,7 +63,7 @@ const feed = async(req, res, next) => {
       $or: [
         { toUserId: loggedInUser._id }, { fromUserId: loggedInUser._id },
       ]
-    }).select("fromUserId toUserId");
+    }).select('fromUserId toUserId');
 
     const hideUserFromFeed = new Set();
 
@@ -80,20 +80,20 @@ const feed = async(req, res, next) => {
     })
     .select(USER_SAFE_DATA)
     .skip(skip)
-    .limit(limit)
-    console.log("========== FEED ======", users);
+    .limit(limit);
+    console.log('========== FEED ======', users);
     res.json({ 
       users,
-    })
+    });
   } catch(error) {
     res.status(400).json({
-      message: error?.message || "Some thing went wrong"
-    })
+      message: error?.message || 'Some thing went wrong'
+    });
   }
-}
+};
 
 module.exports = {
   requestReceived,
   connections,
   feed,
-}
+};

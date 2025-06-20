@@ -1,5 +1,5 @@
 const validator = require('validator');
-const bcrypt = require("bcrypt");
+const bcrypt = require('bcrypt');
 
 const { userLogin, userSignup } = require('../controllers/authController'); // Adjust the path
 const User = require('../models/user'); // Adjust the path
@@ -89,41 +89,41 @@ describe('userLogin controller', () => {
   });
 });
 
-describe("userSignup controller", () => {
+describe('userSignup controller', () => {
   beforeEach(() =>{
     req = {
       body: {
-        firstName: "suraj",
-        lastName: "verma",
-        emailId: "sv1009876@gmail.com",
-        password: "Password@123",
+        firstName: 'suraj',
+        lastName: 'verma',
+        emailId: 'sv1009876@gmail.com',
+        password: 'Password@123',
         age: 32,
         gender: 'male',
       },
-    }
+    };
 
     res = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),
       cookie: jest.fn(),
       send: jest.fn()
-    }
+    };
 
     jest.spyOn(validator, 'isEmail');
     jest.spyOn(validator,'isStrongPassword');
-    jest.spyOn(bcrypt, 'hash')
+    jest.spyOn(bcrypt, 'hash');
 
     next = jest.fn();
     jest.clearAllMocks();
-  })
+  });
 
-  it("Should signup successfully", async() => {
-    const mockHashedPassword = "hashed-password";
+  it('Should signup successfully', async() => {
+    const mockHashedPassword = 'hashed-password';
     const mockSavedUser = {...req.body, password: mockHashedPassword};
     bcrypt.hash.mockResolvedValue(mockHashedPassword);
     User.mockImplementation(() => ({
       save: jest.fn().mockResolvedValue(mockSavedUser)
-    }))
+    }));
 
     validator.isEmail.mockResolvedValue(true);
     validator.isStrongPassword.mockResolvedValue(true);
@@ -133,14 +133,14 @@ describe("userSignup controller", () => {
     expect(bcrypt.hash).toHaveBeenCalledWith('Password@123', 10);
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.json).toHaveBeenCalledWith({
-      message: "User added successfully",
+      message: 'User added successfully',
       user: mockSavedUser
-    })
-  })
+    });
+  });
 
-  it("should return 500 if save throws an error", async() =>{
-    const error = new Error("DB Error");
-    const hashedPassword = "Hashed Password";
+  it('should return 500 if save throws an error', async() =>{
+    const error = new Error('DB Error');
+    const hashedPassword = 'Hashed Password';
     bcrypt.hash.mockResolvedValue(hashedPassword);
     User.mockImplementation(() => ({
       save: jest.fn().mockRejectedValue(error)
@@ -149,11 +149,11 @@ describe("userSignup controller", () => {
     await userSignup(req, res);
 
     expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ error })
-  })
+    expect(res.json).toHaveBeenCalledWith({ error });
+  });
 
-  it("should return 500 if vatidation failed", async() =>{
-    const error = new Error("Validation failed");
+  it('should return 500 if vatidation failed', async() =>{
+    const error = new Error('Validation failed');
 
     dataValidator.validateSignupData.mockImplementation(() => {
       throw error;
@@ -162,6 +162,6 @@ describe("userSignup controller", () => {
     await userSignup(req, res);
 
     expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ error })
-  })
-})
+    expect(res.json).toHaveBeenCalledWith({ error });
+  });
+});
