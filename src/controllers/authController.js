@@ -1,12 +1,9 @@
-const express = require("express");
-const validator = require("validator");
 const bcrypt = require("bcrypt");
 
 const User = require("../models/user");
-const { validateSignupData } = require("../utils/validation");
 const { generateOTP, run } = require("../utils/sendEmail");
 const Otp = require("../models/otp");
-const { loginUser } = require("../services/authService");
+const { loginUser, signupUser } = require("../services/authService");
 
 const userLogin = async (req, res, next) => {
   try {
@@ -29,28 +26,28 @@ const userLogin = async (req, res, next) => {
 };
 const userSignup = async (req, res, next) => {
   try {
-    // Validate the data
-    validateSignupData(req);
+    const {
+      fullName,
+      emailId,
+      dob,
+      age,
+      caste,
+      gender,
+      password,
+      confirmPassword,
+    } = req.body;
 
-    // Encrypt the password
-    const { password, confirmPassword } = req.body;
-    const passwordHash = await bcrypt.hash(password, 10);
-    const confirmPasswordHash = await bcrypt.hash(confirmPassword, 10);
-
-    // save to the database
-    const userObj = {
-      fullName: req.body.fullName,
-      emailId: req.body.emailId,
-      dob: req.body.dob,
-      age: req.body.age,
-      caste: req.body.caste,
-      gender: req.body.gender,
-      password: passwordHash,
-      confirmPassword: confirmPasswordHash,
-    };
-
-    const user = new User(userObj);
-    const savedUser = await user.save();
+    const savedUser = await signupUser({
+      fullName,
+      emailId,
+      dob,
+      age,
+      caste,
+      gender,
+      password,
+      confirmPassword
+    })
+    
     res.status(201).json({
       message: "User added successfully",
       user: savedUser,

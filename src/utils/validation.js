@@ -1,8 +1,6 @@
 const validator  = require("validator");
 
-const validateSignupData = (req) => {
-    console.log("======= INSIDE VALIDATOR FUNCTION")
-    const { fullName,emailId, password} = req.body;
+const validateSignupData = ({ fullName, emailId, password }) => {
     if (!fullName ) {
         throw new Error("Name is not valid")
     } else if (fullName.length < 4 || fullName > 50) {
