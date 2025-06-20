@@ -1,12 +1,12 @@
 
-const { validateProfileEditData }  = require("../utils/validation");
-const User = require("../models/user");
+const { validateProfileEditData }  = require('../utils/validation');
+const User = require('../models/user');
 
 const getProfile = async (req, res) => {
   try {
     const userId = req.userId;
     if(!userId) {
-      throw new Error("User is not exits, please login again")
+      throw new Error('User is not exits, please login again');
     }
 
     const user = await User.findById(userId);
@@ -16,16 +16,16 @@ const getProfile = async (req, res) => {
     });
   } catch (error) {
     res.status(403).json({
-      message: error.message || "Something went wrong",
+      message: error.message || 'Something went wrong',
       error
-    })
+    });
   }
-}
+};
 
 const updateProfile = async(req, res) => {
   try {
     if (!validateProfileEditData(req)) {
-      throw new Error("Invalid Edit request")
+      throw new Error('Invalid Edit request');
     }
     const { user: loggedInUser } = req;
   
@@ -34,18 +34,18 @@ const updateProfile = async(req, res) => {
   
     await loggedInUser.save();
     res.status(201).json({
-      message: "User updated successfully",
+      message: 'User updated successfully',
       user: loggedInUser 
-    })
+    });
   } catch(error) {
     res.status(400).json({
-      message: "Can't able to update profile",
+      message: 'Can not able to update profile',
       error,
-    })
+    });
   } 
-}
+};
 
 module.exports = {
   getProfile,
   updateProfile
-}
+};

@@ -1,19 +1,19 @@
-const express = require("express");
-const { userLogin, userSignup, userForgotPassword, userResetPassword } = require("../controllers/authController");
+const express = require('express');
+const { userLogin, userSignup, userForgotPassword, userResetPassword } = require('../controllers/authController');
 
 const router = express.Router();
 
-router.post("/login", userLogin );
+router.post('/login', userLogin );
 
-router.post("/signup", userSignup);
+router.post('/signup', userSignup);
 
-router.post("/forgot-password", userForgotPassword )
-router.post("/reset-password", userResetPassword )
+router.post('/forgot-password', userForgotPassword );
+router.post('/reset-password', userResetPassword );
 
-router.post("/logout", async(req, res, next) => {
+router.post('/logout', async(req, res, next) => {
   // set the cookies expire
   res.cookie('token', null, { expires: new Date(Date.now())});
-  res.status(200).json({ message: "Logout is successfully"});
-})
+  res.status(200).json({ message: 'Logout is successfully'});
+});
 
 module.exports = router;

@@ -1,5 +1,5 @@
-const jwt = require("jsonwebtoken");
-const User = require("../models/user");
+const jwt = require('jsonwebtoken');
+const User = require('../models/user');
 const adminAuth = (req, res, next) => {};
 
 const userAuth = async (req, res, next) => {
@@ -7,10 +7,10 @@ const userAuth = async (req, res, next) => {
      // Readthe token req cookies
   const { token } = req.cookies;
   if (!token) {
-    throw new Error("Token is required, Please login")
+    throw new Error('Token is required, Please login');
   }
   // validate the token
-  const decodedObj = jwt.verify(token, "DEV@Tinder123#");
+  const decodedObj = jwt.verify(token, 'DEV@Tinder123#');
   // find the user
 
   const { _id } = decodedObj;
@@ -18,13 +18,13 @@ const userAuth = async (req, res, next) => {
   const user = await User.findById(_id);
 
   if (!user) {
-    throw new Error("Invalid User, you can not access")
+    throw new Error('Invalid User, you can not access');
   }
   req.user = user;
   req.userId = user._id;
   next();
   } catch(error) {
-    res.status(400).send("Error: " + error.message);
+    res.status(400).send('Error: ' + error.message);
   }
 };
 

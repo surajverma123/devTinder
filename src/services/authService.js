@@ -1,24 +1,24 @@
-const validator = require("validator");
-const bcrypt = require("bcrypt");
-const User = require("../models/user");
+const validator = require('validator');
+const bcrypt = require('bcrypt');
+const User = require('../models/user');
 
-const { USER_PROFILE_DATA } = require("../utils/constant");
-const { validateSignupData } = require("../utils/validation");
+const { USER_PROFILE_DATA } = require('../utils/constant');
+const { validateSignupData } = require('../utils/validation');
 const loginUser = async ({ emailId, password }) => {
   if (!validator.isEmail(emailId)) {
-    throw new Error("Email is not valid");
+    throw new Error('Email is not valid');
   }
 
   const user = await User.findOne({ emailId }).populate(USER_PROFILE_DATA);
 
   if (!user) {
-    throw new Error("Email and password do not match");
+    throw new Error('Email and password do not match');
   }
 
   const isPasswordValid = await user.validatePassword(password);
 
   if (!isPasswordValid) {
-    throw new Error("Password is not valid");
+    throw new Error('Password is not valid');
   }
 
   const token = await user.getJWT();
