@@ -14,7 +14,9 @@ const sendRequest = async ({ status, toUserId, fromUserId }) => {
 
   const isToUserExits = await User.findById(toUserId);
   if (!isToUserExits) {
-    return res.status(404).send('User not found');
+    const error =  new Error('User not found');
+    error.statusCode = 404;
+    throw error;
   }
   // IF there is an existing connection request
   const exitstingConnectionRequest = await ConnectionRequest.findOne({
@@ -25,9 +27,9 @@ const sendRequest = async ({ status, toUserId, fromUserId }) => {
   });
 
   if (exitstingConnectionRequest) {
-    return res.status(400).json({
-      message: 'Connection request is exits'
-    });
+    const error = new Error('Connection request is exits');
+    error.statusCode = 400;
+    throw error;    
   }
 
   const connectReuest = new ConnectionRequest({

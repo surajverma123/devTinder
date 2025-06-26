@@ -8,7 +8,7 @@ const USER_SAFE_DATA = 'fullName firstName lastName photoUrl age gender about sk
 const requestReceived = async(req, res) => {
     try {
       const loggedInUser = req.user;
-      await reqReceived({ loggedInUser });
+      const {conRequest } = await reqReceived({ loggedInUser });
 
       res.status(200).json({
         message: 'Data fetched successfully',
