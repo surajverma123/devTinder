@@ -108,12 +108,12 @@ const getAllFavorites = async (req, res) => {
   try {
     const loggedInUser = req.user;
     const user = await User.findById(loggedInUser._id)
-    .populate('favorites', 'firstName lastName email') // or USER_SAFE_DATA
+    .populate('favorites', 'fullName emailId photoUrl') // or USER_SAFE_DATA
     .lean(); // optional
 
     res.status(200).json({
       success: true,
-      favorites: user,
+      favorites: user.favorites,
     });
   } catch(error) {
     res.status(error.statusCode || 500).json({

@@ -22,7 +22,7 @@ router.get('/connections', userAuth, connections);
 router.get('/feed', userAuth, feed);
 router.get('/profile/:userId', userAuth, profile);
 
-router.get('/favorite', userAuth, getAllFavorites);
+router.get('/favorites', userAuth, getAllFavorites);
 router.post('/favorite', userAuth, addToFavorite);
 
 router.delete('/favorite', userAuth, removeFromFavorite);
