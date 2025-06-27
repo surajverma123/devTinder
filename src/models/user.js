@@ -81,7 +81,13 @@ const userSchema = new mongoose.Schema(
     lastSeen: {
       type: mongoose.Schema.Types.Date,
       default: null,
-    }
+    },
+    favorites: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+      }
+    ]
   },
   { timestamps: true }
 );
@@ -101,7 +107,11 @@ userSchema.methods.getJWT = async function () {
 
   return token;
 };
-
+userSchema.virtual('fullName1').get(function () {
+  return `${this.firstName} ${this.lastName}`;
+});
+userSchema.set('toObject', { virtuals: true });
+userSchema.set('toJSON', { virtuals: true });
 userSchema.methods.validatePassword = async function (passwordInputByUser) {
   const isPasswordValid = await bcrypt.compare(
     passwordInputByUser,

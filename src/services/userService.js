@@ -63,4 +63,10 @@ const userFeed = async ({ page, limit, loggedInUser }) => {
     return users;
 };
 
-module.exports = { reqReceived, userConnection, userFeed };
+const fetchUserDetails = async ({ userId }) => {
+   const user = await User.findById(userId).select(USER_SAFE_DATA);
+   return { user };
+  
+};
+
+module.exports = { reqReceived, userConnection, userFeed, fetchUserDetails };
