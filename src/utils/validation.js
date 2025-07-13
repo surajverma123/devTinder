@@ -1,7 +1,6 @@
 const validator  = require("validator");
 
 const validateSignupData = (req) => {
-    console.log("======= INSIDE VALIDATOR FUNCTION")
     const { fullName,emailId, password} = req.body;
     if (!fullName ) {
         throw new Error("Name is not valid")
@@ -15,10 +14,8 @@ const validateSignupData = (req) => {
 }
 
 const validateProfileEditData = (req) => {
-    const allowedEditFields = ["fullName", "caste", "emailId", "photoUrl", "age", "gender","about", "skills","dob","confirmPassword"];
-    
+    const allowedEditFields = ["fullName", "caste", "emailId", "photoUrl", "phone","age", "gender","about", "skills","dateOfBirth","confirmPassword"];
     const isAllowEdit = Object.keys(req.body).every(key => allowedEditFields.includes(key));
-    
     return isAllowEdit;
 }
 
