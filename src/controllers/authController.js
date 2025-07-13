@@ -18,12 +18,15 @@ const userLogin = async (req, res, next) => {
     });
     res.status(200).send({
       status: 200,
+      success: true,
       message: "User login successfull",
-      user
+      data: user,
+      token: token
     });
   } catch (error) {
     res.status(403).json({
       message: error.message,
+      success: false,
     });
   }
 };
@@ -37,13 +40,24 @@ const userSignup = async (req, res, next) => {
     const passwordHash = await bcrypt.hash(password, 10);
     const confirmPasswordHash = await bcrypt.hash(confirmPassword, 10);
 
+    const birthDate = new Date(req.body.dateOfBirth);
+    const today = new Date();
+
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+
     // save to the database
     const userObj = {
       fullName: req.body.fullName,
       emailId: req.body.emailId,
-      dob: req.body.dob,
-      age: req.body.age,
-      caste: req.body.caste,
+      dateOfBirth: req.body.dateOfBirth,
+      age: age,
+      caste: "dhobi",
+      phone:req.body.phone,
       gender: req.body.gender,
       password: passwordHash,
       confirmPassword: confirmPasswordHash,
@@ -51,9 +65,12 @@ const userSignup = async (req, res, next) => {
 
     const user = new User(userObj);
     const savedUser = await user.save();
+     const token = await savedUser.getJWT();
     res.status(201).json({
       message: "User added successfully",
       user: savedUser,
+      token:token,
+      success:true,
       status: 200,
     });
   } catch (error) {
@@ -134,7 +151,7 @@ const userResetPassword = async (req, res, next) => {
     );
 
     await Otp.deleteOne({ _id: record._id }); // OTP is single-use
-    
+
     res.status(200).json({
       success: true,
       status: 200,

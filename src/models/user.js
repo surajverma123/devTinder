@@ -14,13 +14,13 @@ const userSchema = new mongoose.Schema(
     },
     caste: {
       type: String,
-      required: true,
       enum: {
         values: ["dhobi", "pandit", "other"],
         message: `{VALUE} is not a valid caste type`,
       },
+      default: "dhobi",
     },
-    dob: {
+    dateOfBirth: {
       type: Date,
       required: true,
     },
@@ -35,6 +35,10 @@ const userSchema = new mongoose.Schema(
           throw new Error("Invalid email address");
         }
       },
+    },
+    phone: {
+      type: String,
+      required: true,
     },
     password: {
       type: String,
