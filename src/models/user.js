@@ -1,7 +1,7 @@
-const mongoose = require("mongoose");
-const validator = require("validator");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+const mongoose = require('mongoose');
+const validator = require('validator');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 // save to the database
 const userSchema = new mongoose.Schema(
@@ -16,8 +16,8 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       enum: {
-        values: ["dhobi", "pandit", "other"],
-        message: `{VALUE} is not a valid caste type`,
+        values: ['dhobi', 'pandit', 'other'],
+        message: '{VALUE} is not a valid caste type',
       },
     },
     dob: {
@@ -32,7 +32,7 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       validate(email) {
         if (!validator.isEmail(email)) {
-          throw new Error("Invalid email address");
+          throw new Error('Invalid email address');
         }
       },
     },
@@ -55,17 +55,17 @@ const userSchema = new mongoose.Schema(
     gender: {
       type: String,
       enum: {
-        values: ["male", "female", "other"],
-        message: `{VALUE} is not a valid gender type`,
+        values: ['male', 'female', 'other'],
+        message: '{VALUE} is not a valid gender type',
       },
     },
     photoUrl: {
       type: String,
-      default: "dummy url",
+      default: 'dummy url',
     },
     about: {
       type: String,
-      default: "This is a default description for user",
+      default: 'This is a default description for user',
     },
     skills: {
       type: [String],
@@ -75,13 +75,19 @@ const userSchema = new mongoose.Schema(
       default: 'offline',
       enum: {
         values: ['online', 'offline'],
-        message: `{VALUE} is not valid for status`,
+        message: '{VALUE} is not valid for status',
       }
     },
     lastSeen: {
       type: mongoose.Schema.Types.Date,
       default: null,
-    }
+    },
+    favorites: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      }
+    ]
   },
   { timestamps: true }
 );
@@ -93,15 +99,19 @@ userSchema.methods.getJWT = async function () {
       _id: user._id,
       email: user.emailId,
     },
-    "DEV@Tinder123#",
+    'DEV@Tinder123#',
     {
-      expiresIn: "1d",
+      expiresIn: '1d',
     }
   );
 
   return token;
 };
-
+userSchema.virtual('fullName1').get(function () {
+  return `${this.firstName} ${this.lastName}`;
+});
+userSchema.set('toObject', { virtuals: true });
+userSchema.set('toJSON', { virtuals: true });
 userSchema.methods.validatePassword = async function (passwordInputByUser) {
   const isPasswordValid = await bcrypt.compare(
     passwordInputByUser,
@@ -110,5 +120,5 @@ userSchema.methods.validatePassword = async function (passwordInputByUser) {
   return isPasswordValid;
 };
 
-const UserModel = mongoose.model("User", userSchema);
+const UserModel = mongoose.model('User', userSchema);
 module.exports = UserModel;

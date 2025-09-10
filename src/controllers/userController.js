@@ -1,99 +1,133 @@
-const ConnectionRequest = require("../models/connectionRequest");
-const User = require("../models/user");
+const ConnectionRequest = require('../models/connectionRequest');
+const { reqReceived, userConnection, userFeed } = require("../services/userService");
 
-const USER_SAFE_DATA = "fullName firstName lastName photoUrl age gender about skills status lastSeen";
+const User = require('../models/user');
 
-const requestReceived = async(req, res, next) => {
+const USER_SAFE_DATA = 'fullName firstName lastName photoUrl age gender about skills status lastSeen';
+
+const requestReceived = async(req, res) => {
     try {
       const loggedInUser = req.user;
-      const conRequest = await ConnectionRequest.find({
-        toUserId: loggedInUser._id,
-        status: "interested"
-      })
-      .populate('fromUserId', USER_SAFE_DATA)
+      const {conRequest } = await reqReceived({ loggedInUser });
 
       res.status(200).json({
         message: 'Data fetched successfully',
         data: conRequest,
-      })
+      });
     } catch(error) {
-        res.status(400).send("Error "+ error.message)
+        res.status(400).send('Error '+ error.message);
     }
-}
+};
 
-const connections = async(req, res, next) => {
+const connections = async(req, res) => {
   try {
     const loggedInUser = req.user;
     // Suraj ==> sent ==> Akash
     // Pooja ==> sent ==> Suraj
-    const connections = await ConnectionRequest.find({
-      $or: [
-        { toUserId: loggedInUser._id, status: "accepted" },
-        { fromUserId: loggedInUser._id, status: "accepted" }
-      ]
-    })
-    .populate("fromUserId", USER_SAFE_DATA)
-    .populate("toUserId", USER_SAFE_DATA);
-    console.log(connections);
-
-    const data = connections.map(row => {
-      if (row.fromUserId._id.toString() === loggedInUser._id.toString()) {
-        return row.toUserId
-      }
-
-      return row.fromUserId;
-    })
+    const data = await userConnection({ loggedInUser });
     res.json({ data });
   } catch(error) {
     res.status(400).json({
       message: `Error: ${error.message}`
-    })
+    });
   }
-}
+};
 
-const feed = async(req, res, next) => {
+const feed = async(req, res) => {
   try {
     const loggedInUser = req.user;
     const page = req.params.page || 1;
     let limit = req.params.limit || 10;
-    const skip = (page - 1) * limit;
-    limit = limit > 50 ? 50 : limit;
- 
-    const connectionRequest = await ConnectionRequest.find({
-      $or: [
-        { toUserId: loggedInUser._id }, { fromUserId: loggedInUser._id },
-      ]
-    }).select("fromUserId toUserId");
+    const users = await userFeed({ page, limit, loggedInUser });
 
-    const hideUserFromFeed = new Set();
-
-    connectionRequest.forEach(cReq => {
-      hideUserFromFeed.add(cReq.toUserId.toString());
-      hideUserFromFeed.add(cReq.fromUserId.toString());
-    });
-
-    const users = await User.find({
-      $and: [
-        { _id: { $nin: Array.from(hideUserFromFeed)} },
-        { _id: { $ne: loggedInUser._id }}
-      ]
-    })
-    .select(USER_SAFE_DATA)
-    .skip(skip)
-    .limit(limit)
-    console.log("========== FEED ======", users);
     res.json({ 
       users,
-    })
+    });
   } catch(error) {
     res.status(400).json({
-      message: error?.message || "Some thing went wrong"
-    })
+      message: error?.message || 'Some thing went wrong'
+    });
   }
-}
+};
+
+const profile = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const {user } = fetchUserDetails({ userId });
+    res.status(200).json({
+      user,
+    });
+  } catch(error) {
+    res.status(error.statusCode || 500).json({
+      error,
+    });
+  }
+};
+
+const addToFavorite = async(req, res) => {
+    try {
+      const loggedInUser = req.user;
+      const { favoriteUserId } = req.body;
+
+      await User.findByIdAndUpdate(loggedInUser._id, {
+        $addToSet: { favorites: favoriteUserId }
+      });
+
+      res.status(200).json({
+        success: true,
+        message: 'Successfully addded into favorite list'
+      });
+  } catch(error) {
+    res.status(error.statusCode || 500).json({
+      error,
+    });
+  }
+};  
+
+const removeFromFavorite = async (req, res) => {
+  try {
+    const loggedInUser = req.user;
+    const { favoriteUserId } = req.body;
+
+    await User.findByIdAndUpdate(loggedInUser._id, {
+    $pull: { favorites: favoriteUserId }
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'User is removed from favorite list'
+    });
+  } catch(error) {
+    res.status(error.statusCode || 500).json({
+      error,
+    });
+  }
+};
+
+const getAllFavorites = async (req, res) => {
+  try {
+    const loggedInUser = req.user;
+    const user = await User.findById(loggedInUser._id)
+    .populate('favorites', 'fullName emailId photoUrl') // or USER_SAFE_DATA
+    .lean(); // optional
+
+    res.status(200).json({
+      success: true,
+      favorites: user.favorites,
+    });
+  } catch(error) {
+    res.status(error.statusCode || 500).json({
+      error,
+    });
+  }
+};
 
 module.exports = {
   requestReceived,
   connections,
   feed,
-}
+  profile,
+  addToFavorite,
+  removeFromFavorite,
+  getAllFavorites
+};
